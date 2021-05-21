@@ -24,7 +24,7 @@
    SPDX-License-Identifier: GPL-3.0-or-later */
 
 #include "support.h"
-
+#include "bsg_manycore.h"
 
 extern int initialise_benchmark (void);
 extern int verify_benchmark (int unused);
@@ -39,15 +39,18 @@ main (int   argc __attribute__ ((unused)),
 
   initialise_board ();
   initialise_benchmark ();
+  bsg_heartbeat_init();
   start_trigger ();
 
   for (i = 0; i < REPEAT_FACTOR; i++)
     {
       initialise_benchmark ();
       result = benchmark ();
+      bsg_heartbeat_iter(i);
     }
 
   stop_trigger ();
+  bsg_heartbeat_end ();
 
   /* bmarks that use arrays will check a global array rather than int result */
 
